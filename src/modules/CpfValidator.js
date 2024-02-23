@@ -1,4 +1,4 @@
-class ValidaCpf {
+export default class CpfValidator {
     constructor(cpf) {
         Object.defineProperty(this, "cleanCPF", {
             value: cpf.replace(/\D+/g, ''),
@@ -56,10 +56,13 @@ class ValidaCpf {
     }   
 }
 
-const user1 = new Cpf("070.987.720-03");
+const user1 = new CpfValidator("070.987.720-03");
 
 if (user1.validateCpf()) {
     console.log("CPF válido");
 } else {
     console.log("CPF inválido");
 }
+
+console.log('oi')
+

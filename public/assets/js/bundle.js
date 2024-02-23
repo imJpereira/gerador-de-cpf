@@ -2,6 +2,126 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./src/modules/CpfGenerator.js":
+/*!*************************************!*\
+  !*** ./src/modules/CpfGenerator.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ CpfGenerator)
+/* harmony export */ });
+/* harmony import */ var _CpfValidator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CpfValidator */ "./src/modules/CpfValidator.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var CpfGenerator = /*#__PURE__*/_createClass(function CpfGenerator() {
+  _classCallCheck(this, CpfGenerator);
+});
+
+
+/***/ }),
+
+/***/ "./src/modules/CpfValidator.js":
+/*!*************************************!*\
+  !*** ./src/modules/CpfValidator.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ CpfValidator)
+/* harmony export */ });
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+var CpfValidator = /*#__PURE__*/function () {
+  function CpfValidator(cpf) {
+    _classCallCheck(this, CpfValidator);
+    _defineProperty(this, "sum", function (multipliedArray) {
+      return multipliedArray.reduce(function (ac, digit) {
+        return ac += digit;
+      }, 0);
+    });
+    Object.defineProperty(this, "cleanCPF", {
+      value: cpf.replace(/\D+/g, ''),
+      enumerable: false,
+      writable: false,
+      configurable: false
+    });
+  }
+  _createClass(CpfValidator, [{
+    key: "validateCpf",
+    value: function validateCpf() {
+      if (this.cleanCPF.length !== 11) return false;
+      if (typeof this.cleanCPF !== "string") return false;
+      if (this.isSequential()) return false;
+      this.createBaseArray();
+      this.calculation();
+      return this.cleanCPF === this.baseArray.join('');
+    }
+  }, {
+    key: "isSequential",
+    value: function isSequential() {
+      var sequence = this.cleanCPF[0].repeat(11);
+      return sequence === this.cleanCPF;
+    }
+  }, {
+    key: "createBaseArray",
+    value: function createBaseArray() {
+      this.baseArray = this.cleanCPF.split('');
+      this.baseArray.splice(-2);
+    }
+  }, {
+    key: "calculation",
+    value: function calculation() {
+      for (var i = 11; i <= 12; i++) this.calculateDigit(i);
+    }
+  }, {
+    key: "calculateDigit",
+    value: function calculateDigit(i) {
+      var multiplied = this.multiply(i);
+      var added = this.sum(multiplied);
+      var digit = this.getDigit(added);
+      this.baseArray.push(String(digit));
+    }
+  }, {
+    key: "multiply",
+    value: function multiply(i) {
+      return this.baseArray.map(function (digit) {
+        i--;
+        return i * Number(digit);
+      });
+    }
+  }, {
+    key: "getDigit",
+    value: function getDigit(number) {
+      var _final = 11 - number % 11;
+      return _final >= 10 ? 0 : _final;
+    }
+  }]);
+  return CpfValidator;
+}();
+
+var user1 = new CpfValidator("070.987.720-03");
+if (user1.validateCpf()) {
+  console.log("CPF válido");
+} else {
+  console.log("CPF inválido");
+}
+console.log('oi');
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js!./src/assets/css/styles.css":
 /*!*************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./src/assets/css/styles.css ***!
@@ -578,7 +698,9 @@ var __webpack_exports__ = {};
   !*** ./src/main.js ***!
   \*********************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _assets_css_styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./assets/css/styles.css */ "./src/assets/css/styles.css");
+/* harmony import */ var _modules_CpfGenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/CpfGenerator */ "./src/modules/CpfGenerator.js");
+/* harmony import */ var _assets_css_styles_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./assets/css/styles.css */ "./src/assets/css/styles.css");
+
 
 })();
 
