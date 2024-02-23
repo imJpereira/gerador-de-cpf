@@ -52,17 +52,8 @@ export default class CpfValidator {
 
     getDigit(number) {
         const final = 11 - (number % 11);
-        return final >= 10 ? 0 : final;
+        return (final >= 10 ? 0 : final);
     }   
 }
-
-const user1 = new CpfValidator("070.987.720-03");
-
-if (user1.validateCpf()) {
-    console.log("CPF válido");
-} else {
-    console.log("CPF inválido");
-}
-
-console.log('oi')
-
+// const user = new CpfValidator('03900321078');
+// console.log(user.validateCpf());
