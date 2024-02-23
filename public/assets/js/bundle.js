@@ -17,18 +17,12 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 var CpfGenerator = /*#__PURE__*/function () {
   function CpfGenerator() {
     _classCallCheck(this, CpfGenerator);
-    _defineProperty(this, "sum", function (multipliedArray) {
-      return multipliedArray.reduce(function (ac, digit) {
-        return ac += digit;
-      }, 0);
-    });
   }
   _createClass(CpfGenerator, [{
     key: "rand",
@@ -40,37 +34,13 @@ var CpfGenerator = /*#__PURE__*/function () {
   }, {
     key: "generateNewCpf",
     value: function generateNewCpf() {
-      this.newCpf = this.rand();
-      this.newCpf = Array.from(this.newCpf);
-      this.calculation();
-      return this.newCpf.join('');
-    }
-  }, {
-    key: "calculation",
-    value: function calculation() {
-      for (var i = 11; i <= 12; i++) this.calculateDigit(i);
-    }
-  }, {
-    key: "calculateDigit",
-    value: function calculateDigit(i) {
-      var multiplied = this.multiply(i);
-      var added = this.sum(multiplied);
-      var digit = this.getDigit(added);
-      this.newCpf.push(String(digit));
-    }
-  }, {
-    key: "multiply",
-    value: function multiply(i) {
-      return this.newCpf.map(function (digit) {
-        i--;
-        return i * Number(digit);
-      });
-    }
-  }, {
-    key: "getDigit",
-    value: function getDigit(number) {
-      var _final = 11 - number % 11;
-      return _final >= 10 ? 0 : _final;
+      var digit9 = this.rand();
+      var newCpf = _CpfValidator__WEBPACK_IMPORTED_MODULE_0__["default"].calculation(digit9);
+      newCpf.splice(3, 0, '.');
+      newCpf.splice(6, 0, '.');
+      newCpf.splice(9, 0, '.');
+      newCpf.splice(12, 0, '-');
+      return newCpf.join('');
     }
   }]);
   return CpfGenerator;
@@ -93,17 +63,11 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 var CpfValidator = /*#__PURE__*/function () {
   function CpfValidator(cpf) {
     _classCallCheck(this, CpfValidator);
-    _defineProperty(this, "sum", function (multipliedArray) {
-      return multipliedArray.reduce(function (ac, digit) {
-        return ac += digit;
-      }, 0);
-    });
     Object.defineProperty(this, "cleanCPF", {
       value: cpf.replace(/\D+/g, ''),
       enumerable: false,
@@ -117,9 +81,7 @@ var CpfValidator = /*#__PURE__*/function () {
       if (this.cleanCPF.length !== 11) return false;
       if (typeof this.cleanCPF !== "string") return false;
       if (this.isSequential()) return false;
-      this.createBaseArray();
-      this.calculation();
-      return this.cleanCPF === this.baseArray.join('');
+      return this.cleanCPF === this.calculation(this.getDigit9());
     }
   }, {
     key: "isSequential",
@@ -127,43 +89,44 @@ var CpfValidator = /*#__PURE__*/function () {
       var sequence = this.cleanCPF[0].repeat(11);
       return sequence === this.cleanCPF;
     }
+
+    //SELECIONA 9 PRIMEIROS DIGITOS
   }, {
-    key: "createBaseArray",
-    value: function createBaseArray() {
-      this.baseArray = this.cleanCPF.split('');
-      this.baseArray.splice(-2);
+    key: "getDigit9",
+    value: function getDigit9() {
+      return this.cleanCPF.slice(0, -2);
     }
-  }, {
+
+    //RECEBE OS 9 PRIMEIROS DIGITOS E ADICIONA OS DOIS ÚLTIMOS
+  }], [{
     key: "calculation",
-    value: function calculation() {
-      for (var i = 11; i <= 12; i++) this.calculateDigit(i);
-    }
-  }, {
-    key: "calculateDigit",
-    value: function calculateDigit(i) {
-      var multiplied = this.multiply(i);
-      var added = this.sum(multiplied);
-      var digit = this.getDigit(added);
-      this.baseArray.push(String(digit));
-    }
-  }, {
-    key: "multiply",
-    value: function multiply(i) {
-      return this.baseArray.map(function (digit) {
-        i--;
-        return i * Number(digit);
-      });
-    }
-  }, {
-    key: "getDigit",
-    value: function getDigit(number) {
-      var _final = 11 - number % 11;
-      return _final >= 10 ? 0 : _final;
+    value: function calculation(digit9) {
+      var baseArray = Array.from(digit9);
+      var _loop = function _loop() {
+        var descendent = i;
+        var multiplied = baseArray.map(function (digit) {
+          descendent--;
+          return descendent * Number(digit);
+        });
+        var sum = multiplied.reduce(function (ac, digit) {
+          return ac += digit;
+        }, 0);
+        var digit = 11 - sum % 11;
+        if (digit >= 10) {
+          baseArray.push('0');
+        } else {
+          baseArray.push(digit);
+        }
+      };
+      for (var i = 11; i <= 12; i++) {
+        _loop();
+      }
+      ;
+      return baseArray;
     }
   }]);
   return CpfValidator;
-}(); // const user = new CpfValidator('03900321078');
-// console.log(user.validateCpf());
+}();
 
 
 /***/ }),

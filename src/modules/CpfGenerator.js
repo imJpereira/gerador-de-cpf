@@ -7,34 +7,12 @@ export default class CpfGenerator {
     }
 
     generateNewCpf() {
-        this.newCpf = this.rand();
-        this.newCpf = Array.from(this.newCpf);
-        this.calculation();
-        return this.newCpf.join('');
-    }
-
-    calculation() {
-        for(let i = 11; i <= 12; i++) this.calculateDigit(i);
-    }
-
-    calculateDigit(i) {
-        const multiplied = this.multiply(i);
-        const added = this.sum(multiplied);
-        const digit = this.getDigit(added);
-        this.newCpf.push(String(digit));
-    }
-
-    multiply(i) {
-        return this.newCpf.map(digit => {
-            i--
-            return i * Number(digit);
-        })
-    }
-
-    sum = multipliedArray => multipliedArray.reduce((ac, digit) => ac += digit, 0)
-
-    getDigit(number) {
-        const final = 11 - (number % 11);
-        return (final >= 10 ? 0 : final);
-    }   
+        const digit9 = this.rand();
+        let newCpf = CpfValidator.calculation(digit9);
+        newCpf.splice(3, 0, '.');
+        newCpf.splice(6, 0, '.')
+        newCpf.splice(9, 0, '.')
+        newCpf.splice(12, 0, '-')
+        return newCpf.join('');
+    } 
 }
