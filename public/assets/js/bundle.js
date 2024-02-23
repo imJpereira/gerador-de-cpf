@@ -29,7 +29,16 @@ var CpfGenerator = /*#__PURE__*/function () {
     value: function rand() {
       var min = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 100000000;
       var max = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 999999999;
-      return String(Math.floor(Math.random() * (max - min) + min));
+      var digits = String(Math.floor(Math.random() * (max - min) + min));
+      var isSequential = this.checkSequential(digits);
+      if (isSequential) this.rand();
+      return digits;
+    }
+  }, {
+    key: "checkSequential",
+    value: function checkSequential(digits) {
+      var sequence = digits[0].repeat(9);
+      return sequence === digits;
     }
   }, {
     key: "generateNewCpf",
@@ -37,9 +46,8 @@ var CpfGenerator = /*#__PURE__*/function () {
       var digit9 = this.rand();
       var newCpf = _CpfValidator__WEBPACK_IMPORTED_MODULE_0__["default"].calculation(digit9);
       newCpf.splice(3, 0, '.');
-      newCpf.splice(6, 0, '.');
-      newCpf.splice(9, 0, '.');
-      newCpf.splice(12, 0, '-');
+      newCpf.splice(7, 0, '.');
+      newCpf.splice(11, 0, '-');
       return newCpf.join('');
     }
   }]);
@@ -169,7 +177,7 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background-color: rgb(112, 45, 175);
+    background-color: rgb(75, 75, 75);
     box-sizing: border-box;
 }
 
@@ -180,12 +188,39 @@ body {
     border-radius: 20px;
 }
 
-.cpf-gerado {
+.cpf-gerado__container {
+    display: flex;
+    align-items: center;
+    border: 1px solid #acabab;
+    border-radius: 10px;
     font-size: 24px;
-    margin: 30px 0;
+    height: 50px;
 }
 
-`, "",{"version":3,"sources":["webpack://./src/assets/css/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,kCAAkC;KACjC,yBAAyB;IAC1B,gBAAgB;IAChB,kBAAkB;IAClB;cACU;AACd;;AAEA;IACI,gBAAgB;AACpB;;AAEA;IACI,aAAa;IACb,mBAAmB;IACnB,uBAAuB;IACvB,aAAa;IACb,mCAAmC;IACnC,sBAAsB;AAC1B;;AAEA;IACI,sBAAsB;IACtB,YAAY;IACZ,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,eAAe;IACf,cAAc;AAClB","sourcesContent":["* {\r\n    font-family: sans-serif;\r\n    font-family: \"Fredoka\", sans-serif;\r\n     font-optical-sizing: auto;\r\n    font-weight: 400;\r\n    font-style: normal;\r\n    font-variation-settings:\r\n    \"wdth\" 100;\r\n}\r\n\r\nh1 {\r\n    font-weight: 600;\r\n}\r\n\r\nbody {\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    height: 100vh;\r\n    background-color: rgb(112, 45, 175);\r\n    box-sizing: border-box;\r\n}\r\n\r\n.main__container {\r\n    background-color: #fff;\r\n    width: 500px;\r\n    padding: 10px 20px;\r\n    border-radius: 20px;\r\n}\r\n\r\n.cpf-gerado {\r\n    font-size: 24px;\r\n    margin: 30px 0;\r\n}\r\n\r\n"],"sourceRoot":""}]);
+.cpf-gerado-text {
+    display: block;
+    font-size: 20px;
+    color: rgb(75, 75, 75);
+    margin: 30px 10px 5px 0;
+}
+
+.cpf-gerado {
+    padding: 5px;
+}
+
+#button {
+    margin-top: 20px;
+    font-size: 24px;
+    border-radius: 10px;
+    border: 1px solid #000;
+    cursor: pointer;
+
+    &:hover {
+        transform: scale(1.02);
+    }
+}
+
+`, "",{"version":3,"sources":["webpack://./src/assets/css/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,kCAAkC;KACjC,yBAAyB;IAC1B,gBAAgB;IAChB,kBAAkB;IAClB;cACU;AACd;;AAEA;IACI,gBAAgB;AACpB;;AAEA;IACI,aAAa;IACb,mBAAmB;IACnB,uBAAuB;IACvB,aAAa;IACb,iCAAiC;IACjC,sBAAsB;AAC1B;;AAEA;IACI,sBAAsB;IACtB,YAAY;IACZ,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,aAAa;IACb,mBAAmB;IACnB,yBAAyB;IACzB,mBAAmB;IACnB,eAAe;IACf,YAAY;AAChB;;AAEA;IACI,cAAc;IACd,eAAe;IACf,sBAAsB;IACtB,uBAAuB;AAC3B;;AAEA;IACI,YAAY;AAChB;;AAEA;IACI,gBAAgB;IAChB,eAAe;IACf,mBAAmB;IACnB,sBAAsB;IACtB,eAAe;;IAEf;QACI,sBAAsB;IAC1B;AACJ","sourcesContent":["* {\r\n    font-family: sans-serif;\r\n    font-family: \"Fredoka\", sans-serif;\r\n     font-optical-sizing: auto;\r\n    font-weight: 400;\r\n    font-style: normal;\r\n    font-variation-settings:\r\n    \"wdth\" 100;\r\n}\r\n\r\nh1 {\r\n    font-weight: 600;\r\n}\r\n\r\nbody {\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    height: 100vh;\r\n    background-color: rgb(75, 75, 75);\r\n    box-sizing: border-box;\r\n}\r\n\r\n.main__container {\r\n    background-color: #fff;\r\n    width: 500px;\r\n    padding: 10px 20px;\r\n    border-radius: 20px;\r\n}\r\n\r\n.cpf-gerado__container {\r\n    display: flex;\r\n    align-items: center;\r\n    border: 1px solid #acabab;\r\n    border-radius: 10px;\r\n    font-size: 24px;\r\n    height: 50px;\r\n}\r\n\r\n.cpf-gerado-text {\r\n    display: block;\r\n    font-size: 20px;\r\n    color: rgb(75, 75, 75);\r\n    margin: 30px 10px 5px 0;\r\n}\r\n\r\n.cpf-gerado {\r\n    padding: 5px;\r\n}\r\n\r\n#button {\r\n    margin-top: 20px;\r\n    font-size: 24px;\r\n    border-radius: 10px;\r\n    border: 1px solid #000;\r\n    cursor: pointer;\r\n\r\n    &:hover {\r\n        transform: scale(1.02);\r\n    }\r\n}\r\n\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -716,9 +751,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _assets_css_styles_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./assets/css/styles.css */ "./src/assets/css/styles.css");
 
 
-var div = document.querySelector('.cpf-gerado');
-var cpf = new _modules_CpfGenerator__WEBPACK_IMPORTED_MODULE_0__["default"]();
-div.innerText = cpf.generateNewCpf();
+var div = document.getElementById('cpf-gerado');
+document.addEventListener('click', function (e) {
+  if (e.target.id.includes('button')) {
+    var cpf = new _modules_CpfGenerator__WEBPACK_IMPORTED_MODULE_0__["default"]();
+    div.innerText = cpf.generateNewCpf();
+  }
+});
 })();
 
 /******/ })()

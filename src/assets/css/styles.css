@@ -17,7 +17,7 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background-color: rgb(112, 45, 175);
+    background-color: rgb(75, 75, 75);
     box-sizing: border-box;
 }
 
@@ -28,8 +28,35 @@ body {
     border-radius: 20px;
 }
 
-.cpf-gerado {
+.cpf-gerado__container {
+    display: flex;
+    align-items: center;
+    border: 1px solid #acabab;
+    border-radius: 10px;
     font-size: 24px;
-    margin: 30px 0;
+    height: 50px;
+}
+
+.cpf-gerado-text {
+    display: block;
+    font-size: 20px;
+    color: rgb(75, 75, 75);
+    margin: 30px 10px 5px 0;
+}
+
+.cpf-gerado {
+    padding: 5px;
+}
+
+#button {
+    margin-top: 20px;
+    font-size: 24px;
+    border-radius: 10px;
+    border: 1px solid #000;
+    cursor: pointer;
+
+    &:hover {
+        transform: scale(1.02);
+    }
 }
 
