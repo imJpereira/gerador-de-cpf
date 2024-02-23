@@ -1,0 +1,30 @@
+* {
+    font-family: sans-serif;
+    font-family: "Fredoka", sans-serif;
+     font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings:
+    "wdth" 100;
+}
+
+h1 {
+    font-weight: 600;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: rgb(112, 45, 175);
+    box-sizing: border-box;
+}
+
+.main__container {
+    background-color: #fff;
+    width: 500px;
+    padding: 10px 20px;
+    border-radius: 20px;
+}
+
