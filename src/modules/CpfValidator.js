@@ -9,15 +9,11 @@ export default class CpfValidator {
     }
 
     validateCpf() {
-
         if (this.cleanCPF.length !== 11) return false;
         if (typeof this.cleanCPF !== "string") return false;
         if (this.isSequential()) return false;
         
-        this.createBaseArray();
-        this.calculation();
-        
-        return this.cleanCPF === this.baseArray.join('');
+        return this.cleanCPF === this.calculation(this.getDigit9());
     }
 
     isSequential() {
@@ -25,44 +21,32 @@ export default class CpfValidator {
         return sequence === this.cleanCPF;
     }
 
-    createBaseArray() {
-        this.baseArray = this.cleanCPF.split('');
-        this.baseArray.splice(-2);
+    //SELECIONA 9 PRIMEIROS DIGITOS
+    getDigit9() {
+        return this.cleanCPF.slice(0, -2);
     }
+ 
+    //RECEBE OS 9 PRIMEIROS DIGITOS E ADICIONA OS DOIS ÚLTIMOS
+    static calculation(digit9) {
+        const baseArray = Array.from(digit9);
+        for(let i = 11; i <= 12; i++) {
 
-    calculation() {
-        for(let i = 11; i <= 12; i++) this.calculateDigit(i);
+            let descendent = i
+            const multiplied = baseArray.map(digit => {
+                descendent--
+                return descendent * Number(digit);
+            })
+
+            const sum = multiplied.reduce((ac, digit) => ac += digit, 0);
+
+            const digit = 11 - (sum % 11);
+            
+            if (digit >= 10) {
+                baseArray.push('0');
+            }  else {
+                baseArray.push(digit);
+            }
+        };
+        return baseArray;
     }
-
-    calculateDigit(i) {
-        const multiplied = this.multiply(i);
-        const added = this.sum(multiplied);
-        const digit = this.getDigit(added);
-        this.baseArray.push(String(digit));
-    }
-
-    multiply(i) {
-        return this.baseArray.map(digit => {
-            i--
-            return i * Number(digit);
-        })
-    }
-
-    sum = multipliedArray => multipliedArray.reduce((ac, digit) => ac += digit, 0)
-
-    getDigit(number) {
-        const final = 11 - (number % 11);
-        return final >= 10 ? 0 : final;
-    }   
 }
-
-const user1 = new CpfValidator("070.987.720-03");
-
-if (user1.validateCpf()) {
-    console.log("CPF válido");
-} else {
-    console.log("CPF inválido");
-}
-
-console.log('oi')
-

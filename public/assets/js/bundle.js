@@ -14,15 +14,45 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _CpfValidator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CpfValidator */ "./src/modules/CpfValidator.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var CpfGenerator = /*#__PURE__*/_createClass(function CpfGenerator() {
-  _classCallCheck(this, CpfGenerator);
-});
+var CpfGenerator = /*#__PURE__*/function () {
+  function CpfGenerator() {
+    _classCallCheck(this, CpfGenerator);
+  }
+  _createClass(CpfGenerator, [{
+    key: "rand",
+    value: function rand() {
+      var min = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 100000000;
+      var max = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 999999999;
+      var digits = String(Math.floor(Math.random() * (max - min) + min));
+      var isSequential = this.checkSequential(digits);
+      if (isSequential) this.rand();
+      return digits;
+    }
+  }, {
+    key: "checkSequential",
+    value: function checkSequential(digits) {
+      var sequence = digits[0].repeat(9);
+      return sequence === digits;
+    }
+  }, {
+    key: "generateNewCpf",
+    value: function generateNewCpf() {
+      var digit9 = this.rand();
+      var newCpf = _CpfValidator__WEBPACK_IMPORTED_MODULE_0__["default"].calculation(digit9);
+      newCpf.splice(3, 0, '.');
+      newCpf.splice(7, 0, '.');
+      newCpf.splice(11, 0, '-');
+      return newCpf.join('');
+    }
+  }]);
+  return CpfGenerator;
+}();
 
 
 /***/ }),
@@ -41,17 +71,11 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 var CpfValidator = /*#__PURE__*/function () {
   function CpfValidator(cpf) {
     _classCallCheck(this, CpfValidator);
-    _defineProperty(this, "sum", function (multipliedArray) {
-      return multipliedArray.reduce(function (ac, digit) {
-        return ac += digit;
-      }, 0);
-    });
     Object.defineProperty(this, "cleanCPF", {
       value: cpf.replace(/\D+/g, ''),
       enumerable: false,
@@ -65,9 +89,7 @@ var CpfValidator = /*#__PURE__*/function () {
       if (this.cleanCPF.length !== 11) return false;
       if (typeof this.cleanCPF !== "string") return false;
       if (this.isSequential()) return false;
-      this.createBaseArray();
-      this.calculation();
-      return this.cleanCPF === this.baseArray.join('');
+      return this.cleanCPF === this.calculation(this.getDigit9());
     }
   }, {
     key: "isSequential",
@@ -75,50 +97,45 @@ var CpfValidator = /*#__PURE__*/function () {
       var sequence = this.cleanCPF[0].repeat(11);
       return sequence === this.cleanCPF;
     }
+
+    //SELECIONA 9 PRIMEIROS DIGITOS
   }, {
-    key: "createBaseArray",
-    value: function createBaseArray() {
-      this.baseArray = this.cleanCPF.split('');
-      this.baseArray.splice(-2);
+    key: "getDigit9",
+    value: function getDigit9() {
+      return this.cleanCPF.slice(0, -2);
     }
-  }, {
+
+    //RECEBE OS 9 PRIMEIROS DIGITOS E ADICIONA OS DOIS ÚLTIMOS
+  }], [{
     key: "calculation",
-    value: function calculation() {
-      for (var i = 11; i <= 12; i++) this.calculateDigit(i);
-    }
-  }, {
-    key: "calculateDigit",
-    value: function calculateDigit(i) {
-      var multiplied = this.multiply(i);
-      var added = this.sum(multiplied);
-      var digit = this.getDigit(added);
-      this.baseArray.push(String(digit));
-    }
-  }, {
-    key: "multiply",
-    value: function multiply(i) {
-      return this.baseArray.map(function (digit) {
-        i--;
-        return i * Number(digit);
-      });
-    }
-  }, {
-    key: "getDigit",
-    value: function getDigit(number) {
-      var _final = 11 - number % 11;
-      return _final >= 10 ? 0 : _final;
+    value: function calculation(digit9) {
+      var baseArray = Array.from(digit9);
+      var _loop = function _loop() {
+        var descendent = i;
+        var multiplied = baseArray.map(function (digit) {
+          descendent--;
+          return descendent * Number(digit);
+        });
+        var sum = multiplied.reduce(function (ac, digit) {
+          return ac += digit;
+        }, 0);
+        var digit = 11 - sum % 11;
+        if (digit >= 10) {
+          baseArray.push('0');
+        } else {
+          baseArray.push(digit);
+        }
+      };
+      for (var i = 11; i <= 12; i++) {
+        _loop();
+      }
+      ;
+      return baseArray;
     }
   }]);
   return CpfValidator;
 }();
 
-var user1 = new CpfValidator("070.987.720-03");
-if (user1.validateCpf()) {
-  console.log("CPF válido");
-} else {
-  console.log("CPF inválido");
-}
-console.log('oi');
 
 /***/ }),
 
@@ -160,7 +177,7 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background-color: rgb(112, 45, 175);
+    background-color: rgb(75, 75, 75);
     box-sizing: border-box;
 }
 
@@ -171,7 +188,39 @@ body {
     border-radius: 20px;
 }
 
-`, "",{"version":3,"sources":["webpack://./src/assets/css/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,kCAAkC;KACjC,yBAAyB;IAC1B,gBAAgB;IAChB,kBAAkB;IAClB;cACU;AACd;;AAEA;IACI,gBAAgB;AACpB;;AAEA;IACI,aAAa;IACb,mBAAmB;IACnB,uBAAuB;IACvB,aAAa;IACb,mCAAmC;IACnC,sBAAsB;AAC1B;;AAEA;IACI,sBAAsB;IACtB,YAAY;IACZ,kBAAkB;IAClB,mBAAmB;AACvB","sourcesContent":["* {\r\n    font-family: sans-serif;\r\n    font-family: \"Fredoka\", sans-serif;\r\n     font-optical-sizing: auto;\r\n    font-weight: 400;\r\n    font-style: normal;\r\n    font-variation-settings:\r\n    \"wdth\" 100;\r\n}\r\n\r\nh1 {\r\n    font-weight: 600;\r\n}\r\n\r\nbody {\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    height: 100vh;\r\n    background-color: rgb(112, 45, 175);\r\n    box-sizing: border-box;\r\n}\r\n\r\n.main__container {\r\n    background-color: #fff;\r\n    width: 500px;\r\n    padding: 10px 20px;\r\n    border-radius: 20px;\r\n}\r\n\r\n"],"sourceRoot":""}]);
+.cpf-gerado__container {
+    display: flex;
+    align-items: center;
+    border: 1px solid #acabab;
+    border-radius: 10px;
+    font-size: 24px;
+    height: 50px;
+}
+
+.cpf-gerado-text {
+    display: block;
+    font-size: 20px;
+    color: rgb(75, 75, 75);
+    margin: 30px 10px 5px 0;
+}
+
+.cpf-gerado {
+    padding: 5px;
+}
+
+#button {
+    margin-top: 20px;
+    font-size: 24px;
+    border-radius: 10px;
+    border: 1px solid #000;
+    cursor: pointer;
+
+    &:hover {
+        transform: scale(1.02);
+    }
+}
+
+`, "",{"version":3,"sources":["webpack://./src/assets/css/styles.css"],"names":[],"mappings":"AAAA;IACI,uBAAuB;IACvB,kCAAkC;KACjC,yBAAyB;IAC1B,gBAAgB;IAChB,kBAAkB;IAClB;cACU;AACd;;AAEA;IACI,gBAAgB;AACpB;;AAEA;IACI,aAAa;IACb,mBAAmB;IACnB,uBAAuB;IACvB,aAAa;IACb,iCAAiC;IACjC,sBAAsB;AAC1B;;AAEA;IACI,sBAAsB;IACtB,YAAY;IACZ,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,aAAa;IACb,mBAAmB;IACnB,yBAAyB;IACzB,mBAAmB;IACnB,eAAe;IACf,YAAY;AAChB;;AAEA;IACI,cAAc;IACd,eAAe;IACf,sBAAsB;IACtB,uBAAuB;AAC3B;;AAEA;IACI,YAAY;AAChB;;AAEA;IACI,gBAAgB;IAChB,eAAe;IACf,mBAAmB;IACnB,sBAAsB;IACtB,eAAe;;IAEf;QACI,sBAAsB;IAC1B;AACJ","sourcesContent":["* {\r\n    font-family: sans-serif;\r\n    font-family: \"Fredoka\", sans-serif;\r\n     font-optical-sizing: auto;\r\n    font-weight: 400;\r\n    font-style: normal;\r\n    font-variation-settings:\r\n    \"wdth\" 100;\r\n}\r\n\r\nh1 {\r\n    font-weight: 600;\r\n}\r\n\r\nbody {\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    height: 100vh;\r\n    background-color: rgb(75, 75, 75);\r\n    box-sizing: border-box;\r\n}\r\n\r\n.main__container {\r\n    background-color: #fff;\r\n    width: 500px;\r\n    padding: 10px 20px;\r\n    border-radius: 20px;\r\n}\r\n\r\n.cpf-gerado__container {\r\n    display: flex;\r\n    align-items: center;\r\n    border: 1px solid #acabab;\r\n    border-radius: 10px;\r\n    font-size: 24px;\r\n    height: 50px;\r\n}\r\n\r\n.cpf-gerado-text {\r\n    display: block;\r\n    font-size: 20px;\r\n    color: rgb(75, 75, 75);\r\n    margin: 30px 10px 5px 0;\r\n}\r\n\r\n.cpf-gerado {\r\n    padding: 5px;\r\n}\r\n\r\n#button {\r\n    margin-top: 20px;\r\n    font-size: 24px;\r\n    border-radius: 10px;\r\n    border: 1px solid #000;\r\n    cursor: pointer;\r\n\r\n    &:hover {\r\n        transform: scale(1.02);\r\n    }\r\n}\r\n\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -702,6 +751,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _assets_css_styles_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./assets/css/styles.css */ "./src/assets/css/styles.css");
 
 
+var div = document.getElementById('cpf-gerado');
+document.addEventListener('click', function (e) {
+  if (e.target.id.includes('button')) {
+    var cpf = new _modules_CpfGenerator__WEBPACK_IMPORTED_MODULE_0__["default"]();
+    div.innerText = cpf.generateNewCpf();
+  }
+});
 })();
 
 /******/ })()
